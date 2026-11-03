@@ -26,9 +26,9 @@
 | `system/rules/` | Отдельные правила: понятный язык, команды PowerShell, пути в Git Bash, предупреждение о необратимом, ИИ-штампы |
 | `system/hooks/` | Хуки, подключённые в настройках, и их библиотеки |
 | `system/skills/` | Системные навыки: agy, brief, short-brief, orc, super-orc, handoff, readme, git-ship, self-check, no-regressions, model-advisor, grill-me, cache-warm, jcodemunch, jdocmunch |
-| `system/agents/` | Субагенты: worker (Sonnet), Explore (Haiku), помощник брифа |
+| `system/agents/` | Субагенты: worker (Sonnet), Explore (Haiku), помощник брифа, opencode |
 | `system/commands/` | Команды, в том числе `oc` (делегирование в OpenCode) |
-| `system/mcp-wrappers/` | Обёртки запуска MCP-серверов (jev, jdocmunch) |
+| `system/mcp-wrappers/` | Обёртки запуска MCP-серверов (jev, jdocmunch) и мост к OpenCode |
 | `system/output-styles/`, `system/statusline.js` | Стиль вывода и строка состояния |
 | `system/design-library/ai-stamps.md` | Каталог ИИ-штампов, на который ссылаются правила |
 | `system/settings.example.json` | Шаблон `settings.json`: пути заменены метками, секреты — `<REDACTED>` |

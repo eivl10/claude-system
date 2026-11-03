@@ -80,27 +80,53 @@ if ($leakFound) {
 }
 
 # 3. Индексация и проверка изменений
+$prevEA = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 git -C $PSScriptRoot add -A
+$addCode = $LASTEXITCODE
+$ErrorActionPreference = $prevEA
+if ($addCode -ne 0) {
+    [Console]::Error.WriteLine("ОШИБКА: git add завершился с кодом $addCode")
+    exit 1
+}
+
+$prevEA = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 git -C $PSScriptRoot diff --cached --quiet
-if ($LASTEXITCODE -eq 0) {
+$diffCode = $LASTEXITCODE
+$ErrorActionPreference = $prevEA
+
+if ($diffCode -eq 0) {
     Write-Host 'Изменений нет'
     exit 0
+}
+if ($diffCode -ne 1) {
+    [Console]::Error.WriteLine("ОШИБКА: git diff завершился с кодом $diffCode")
+    exit 1
 }
 
 # 4. Коммит и push
 $dateStr = (Get-Date).ToString('yyyy-MM-dd')
 $commitMsg = "Обновление системы $dateStr / System update $dateStr"
 
+$prevEA = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 git -C $PSScriptRoot commit -m $commitMsg
-if ($LASTEXITCODE -ne 0) {
-    [Console]::Error.WriteLine("ОШИБКА: git commit завершился с кодом $LASTEXITCODE")
-    exit $LASTEXITCODE
+$commitCode = $LASTEXITCODE
+$ErrorActionPreference = $prevEA
+if ($commitCode -ne 0) {
+    [Console]::Error.WriteLine("ОШИБКА: git commit завершился с кодом $commitCode")
+    exit 1
 }
 
+$prevEA = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 git -C $PSScriptRoot push
-if ($LASTEXITCODE -ne 0) {
-    [Console]::Error.WriteLine("ОШИБКА: git push завершился с кодом $LASTEXITCODE")
-    exit $LASTEXITCODE
+$pushCode = $LASTEXITCODE
+$ErrorActionPreference = $prevEA
+if ($pushCode -ne 0) {
+    [Console]::Error.WriteLine("ОШИБКА: git push завершился с кодом $pushCode")
+    exit 1
 }
 
 exit 0
