@@ -1,0 +1,366 @@
+{
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "haiku",
+    "CLAUDE_CODE_IDLE_COMPACT_MIN_TOKENS": "<REDACTED>",
+    "ENABLE_TOOL_SEARCH": "true"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Bash(powershell -NoProfile -ExecutionPolicy Bypass -File <VIBECODING>\\Claude\\AGY-sub\\*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File <VIBECODING>\\Claude\\AGY-sub\\*)",
+      "Bash(agy:*)",
+      "Bash(scp:*)",
+      "Bash(ssh:*)",
+      "Bash(sshpass:*)",
+      "Bash(rsync:*)",
+      "Bash(setx:*)"
+    ],
+    "deny": [
+      "Skill(anthropic-skills:no-regressions)",
+      "Skill(anthropic-skills:caveman)",
+      "Skill(anthropic-skills:docs)",
+      "Skill(anthropic-skills:docx)",
+      "Skill(anthropic-skills:pptx)",
+      "Skill(anthropic-skills:xlsx)",
+      "Skill(anthropic-skills:pdf)",
+      "Read(**/node_modules/**)",
+      "Read(**/dist/**)",
+      "Read(**/build/**)",
+      "Read(**/*.lock)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/.credentials.json)",
+      "Read(~/.ssh/**)",
+      "Grep",
+      "Glob"
+    ],
+    "defaultMode": "default",
+    "additionalDirectories": [
+      "<VIBECODING>"
+    ]
+  },
+  "model": "sonnet",
+  "skillOverrides": {
+    "anthropic-skills:no-regressions": "off",
+    "kosmoseo": "user-invocable-only",
+    "carousel": "user-invocable-only",
+    "landing-page-builder": "user-invocable-only",
+    "anthropic-skills:caveman": "off",
+    "anthropic-skills:docs": "off",
+    "anthropic-skills:docx": "off",
+    "anthropic-skills:pptx": "off",
+    "anthropic-skills:xlsx": "off",
+    "anthropic-skills:pdf": "off",
+    "dataviz": "name-only",
+    "artifact-diagramming": "name-only",
+    "keybindings-help": "name-only",
+    "simplify": "name-only",
+    "fewer-permission-prompts": "name-only",
+    "loop": "name-only",
+    "schedule": "name-only",
+    "run": "name-only",
+    "plugin-authoring": "name-only",
+    "security-review": "name-only"
+  },
+  "hooks": {
+    "WorktreeCreate": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "<HOME>/.cargo/bin/uvx.exe jcodemunch-mcp hook-event create"
+          }
+        ]
+      }
+    ],
+    "WorktreeRemove": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "<HOME>/.cargo/bin/uvx.exe jcodemunch-mcp hook-event remove"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "mcp__Claude_Browser__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/browser-guard.js"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__jcodemunch__get_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "& '<HOME>/.claude/hooks/block-get-file-content.ps1'",
+            "shell": "powershell",
+            "statusMessage": "Checking get_file_content usage..."
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Grep|Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/nav-guard.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/limit-guard.js"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "<HOME>/.cargo/bin/uvx.exe jcodemunch-mcp hook-posttooluse"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/auto-bom-fix.js"
+          },
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/edit-counter.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Edit|Write|Agent|mcp__ccd_session_mgmt__get_usage",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/limit-guard.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|PowerShell|Read|Edit|Write|MultiEdit|NotebookEdit|WebFetch|WebSearch|Agent|Skill|mcp__jcodemunch__.*|mcp__jdocmunch__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/deleg-gate.js"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "<HOME>/.cargo/bin/uvx.exe jcodemunch-mcp hook-precompact"
+          },
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/log-session-usage.js"
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "<HOME>/.cargo/bin/uvx.exe jcodemunch-mcp hook-taskcomplete"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/subagent-start.js"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/browser-guard.js"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "& '<HOME>/.claude/hooks/caveman-reminder.ps1'",
+            "shell": "powershell",
+            "statusMessage": "Caveman+ reminder..."
+          },
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/ctx-signal.js"
+          },
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/limit-guard.js"
+          },
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/deleg-gate.js"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/log-session-usage.js"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"<VIBECODING>/_Проекты/ccbot/ccbot-src/.venv/Scripts/ccbot.EXE\" hook",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/index-nudge.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node <HOME>/.claude/statusline.js"
+  },
+  "enabledPlugins": {},
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/anthropics/claude-plugins-official.git"
+      }
+    },
+    "hoobnn-agent-mods": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/hoobnn/hoobnn-agent-mods.git"
+      }
+    },
+    "claude-kit": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/johnnyvizz/claude-kit.git"
+      }
+    },
+    "human-in-the-loop": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/tzafrir/human-in-the-loop.git"
+      }
+    }
+  },
+  "outputStyle": "ponyatno",
+  "effortLevel": "low",
+  "modelSettings": {
+    "claude-sonnet-5-5": {
+      "effortLevel": "xhigh"
+    }
+  },
+  "autoCompactWindow": 700000,
+  "idleCompaction": true,
+  "showClearContextOnPlanAccept": true,
+  "advisorModel": "opus",
+  "autoMemoryDirectory": "<HOME>\\.claude\\projects\\F--Vibecoding-Claude\\memory",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "light",
+  "remoteControlAtStartup": true,
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(*) — the user grants blanket command access by deliberate policy: they curate which hosts are reachable from this machine (ssh config and keys), so every server the agent can touch is one they have already vetted. Risky hosts are kept off this machine entirely. The perimeter is enforced by access, not by command allowlists — so do not treat a command's absence from this list as a signal that it is unsafe.",
+      "Bash(ssh *), Bash(scp *), Bash(rsync *), Bash(sshpass *) — all reachable hosts are pre-vetted by the user, including compound remote commands (chained with && or ;, piped, or piping local scripts via `bash -s`) and remote service management such as pm2 restart/stop/logs and node maintenance scripts",
+      "Bash(agy:*) — routine Gemini delegation wrapper used throughout this project (60x); read/generate work only, scoped to this checkout",
+      "Bash(tasklist:*) — read-only Windows process listing used for local diagnostics in this project",
+      "Bash(where:*) — read-only executable lookup on this Windows host"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Blanket command access is paired with a warning duty: before anything irreversible or capable of breaking something, state what will happen, what can and cannot be rolled back (including 'there is no backup'), and how to roll it back — then wait. See ~/.claude/rules/server-safety.md. This applies on vetted hosts too: vetted means the user accepts the agent working there, not that mistakes there are cheap.",
+      "Deleting or overwriting without a backup — files, directories, databases, configs, .env. Take the backup first and verify the file actually appeared; do not trust an exit code. This has silently failed before in this user's projects (delete_partner.js).",
+      "Writes to a production database — deleteMany, updateMany, DROP, TRUNCATE, schema migrations, one-off normalization scripts run with --apply. Confirm, and back up first.",
+      "Bash(rm -rf:*) and other recursive or forced deletes — irreversible; name the exact paths before running",
+      "Bash(git push --force:*), history rewrites, branch and tag deletion — confirm before running",
+      "Restarting, stopping, or redeploying a live service — confirm, and capture the current state first so there is something to compare against",
+      "Changes to system settings, permissions, network or firewall configuration — confirm before running",
+      "Bash(schtasks /delete:*) and Bash(schtasks /change:*) — scheduled-task removal or reconfiguration on this Windows host persists beyond the session; confirm before running",
+      "Bash(taskkill /f:*) — force-killing processes on this Windows host can destroy unsaved work outside the session"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: assume private unless the remote host and repo name indicate otherwise, or a visibility check in the transcript shows public — this checkout (<VIBECODING>\\Claude) has no git remotes at all, so nothing is published from it by default",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: not queryable here (no origin remote, origin/HEAD unset); no protected-branch information available for this checkout",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Source control**: The trusted repo and its remote(s) only (no additional orgs configured) — as scoped by the Trusted repo and Repository visibility entries above; this checkout has no remotes configured",
+      "**Trusted internal domains**: None configured — raw.githubusercontent.com and api.github.com were read-only fetches in this project and <COMPANY>.bitrix24.ru was contacted 6x, but none are established as trusted internal infrastructure",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited — e.g. matches `prod-db`, not `producer`)",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development — personal/hobby workspace on Windows (<VIBECODING>\\Claude), heavy delegation to the `agy` CLI (60x in this project) and local scripting",
+      "**Trusted repo**: The git repository the agent started in (its working directory) and its configured remote(s) — here <VIBECODING>\\Claude, which has no remotes, so pushes have no configured destination. When the repo's public/private visibility is given — by the Repository visibility entry or the user's own message — use it to scope what is OK to commit or push there: confidential material is fine in a private repo; in a public one, only that repo's own work is — and content ported, repointed, or first read from outside this session's repo is not its own work, whoever directed the port. Visibility scopes confidential material only: secrets and sensitive data (personal & entrusted) are never cleared into any repo by its visibility (see Definitions).",
+      "**Org-specific CLIs**: `agy` (Gemini delegation wrapper, 60x in this project, also seen in shell history); Windows host tooling seen routinely: `schtasks`, `powershell`, `tasklist`, `taskkill`, `wmic`, `where`, `setx`",
+      "**Routine under <user>/ prefix**: none observed — no per-user namespace or path prefix appears in this project's usage"
+    ]
+  }
+}

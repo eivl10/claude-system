@@ -1,0 +1,61 @@
+# Конфигурация и интерфейс
+C:/Users/eivld/.claude/CLAUDE.md => CLAUDE.md
+C:/Users/eivld/.claude/settings.json => settings.example.json
+C:/Users/eivld/.claude/statusline.js => statusline.js
+
+# Правила и дизайн
+C:/Users/eivld/.claude/rules => rules
+C:/Users/eivld/.claude/design-library/ai-stamps.md => design-library/ai-stamps.md
+
+# Агенты и команды
+C:/Users/eivld/.claude/agents => agents
+C:/Users/eivld/.claude/commands => commands
+
+# Обёртки MCP и стили вывода
+C:/Users/eivld/.claude/mcp-wrappers => mcp-wrappers
+C:/Users/eivld/.claude/output-styles => output-styles
+
+# Хуки (подключённые в settings.json и их библиотеки)
+C:/Users/eivld/.claude/hooks/auto-bom-fix.js => hooks/auto-bom-fix.js
+C:/Users/eivld/.claude/hooks/block-get-file-content.ps1 => hooks/block-get-file-content.ps1
+C:/Users/eivld/.claude/hooks/browser-guard.js => hooks/browser-guard.js
+C:/Users/eivld/.claude/hooks/caveman-reminder.ps1 => hooks/caveman-reminder.ps1
+C:/Users/eivld/.claude/hooks/ctx-lib.js => hooks/ctx-lib.js
+C:/Users/eivld/.claude/hooks/ctx-signal.js => hooks/ctx-signal.js
+C:/Users/eivld/.claude/hooks/deleg-gate.js => hooks/deleg-gate.js
+C:/Users/eivld/.claude/hooks/edit-counter.js => hooks/edit-counter.js
+C:/Users/eivld/.claude/hooks/index-nudge.js => hooks/index-nudge.js
+C:/Users/eivld/.claude/hooks/limit-guard.js => hooks/limit-guard.js
+C:/Users/eivld/.claude/hooks/log-session-usage.js => hooks/log-session-usage.js
+C:/Users/eivld/.claude/hooks/nav-guard.js => hooks/nav-guard.js
+C:/Users/eivld/.claude/hooks/subagent-start.js => hooks/subagent-start.js
+C:/Users/eivld/.claude/hooks/usage-lib.js => hooks/usage-lib.js
+
+# Системные навыки
+C:/Users/eivld/.claude/skills/agy => skills/agy
+C:/Users/eivld/.claude/skills/brief => skills/brief
+C:/Users/eivld/.claude/skills/short-brief => skills/short-brief
+C:/Users/eivld/.claude/skills/cache-warm => skills/cache-warm
+C:/Users/eivld/.claude/skills/git-ship => skills/git-ship
+C:/Users/eivld/.claude/skills/grill-me => skills/grill-me
+C:/Users/eivld/.claude/skills/handoff => skills/handoff
+C:/Users/eivld/.claude/skills/jcodemunch => skills/jcodemunch
+C:/Users/eivld/.claude/skills/jdocmunch => skills/jdocmunch
+C:/Users/eivld/.claude/skills/model-advisor => skills/model-advisor
+C:/Users/eivld/.claude/skills/no-regressions => skills/no-regressions
+C:/Users/eivld/.claude/skills/orc => skills/orc
+C:/Users/eivld/.claude/skills/readme => skills/readme
+C:/Users/eivld/.claude/skills/self-check => skills/self-check
+C:/Users/eivld/.claude/skills/super-orc => skills/super-orc
+
+# Общие исключения
+!**/node_modules/**
+!**/*.log
+!**/*.jsonl
+!**/backup*/**
+!**/*.bak
+!**/__pycache__/**
+!**/.git/**
+# личный реестр проектов навыка git-ship — не выкладывать
+!**/projects.md
+!projects.md

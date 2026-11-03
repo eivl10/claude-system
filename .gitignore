@@ -1,0 +1,8 @@
+# рабочие файлы оркестратора и личные замены — только локально
+HANDOFF.md
+redact.txt
+docs/*
+!docs/schema.md
+!docs/schema.svg
+!docs/statuses.md
+!docs/не-проверено.md
