@@ -4,5 +4,7 @@ redact.txt
 docs/*
 !docs/schema.md
 !docs/schema.svg
+!docs/schema-simple.md
+!docs/schema-simple.svg
 !docs/statuses.md
 !docs/не-проверено.md
