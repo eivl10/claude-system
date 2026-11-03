@@ -1,7 +1,7 @@
 # claude-system
 
-Личная система настройки Claude Code: правила, хуки, навыки, агенты и обёртки MCP-серверов, которые реально работают у владельца.
-Это не пересказ, а копия живых файлов из `~/.claude`, выгруженная по белому списку с вычищенными личными данными.
+Личная система настройки Claude Code: правила, хуки, скиллы, субагенты и обёртки MCP-серверов, которые реально работают у владельца.
+Здесь лежат копии живых файлов из `~/.claude`: они выгружены по белому списку, личные данные вычищены.
 
 [English below](#english)
 
@@ -9,24 +9,24 @@
 
 ![Простая схема системы](docs/schema-simple.svg)
 
-Подробная схема со всеми скиллами, хуками и MCP: [docs/schema.svg](docs/schema.svg). В ней сплошная рамка — проверено, пунктир — на пробе.
+Подробная схема со всеми скиллами, хуками и MCP: [docs/schema.svg](docs/schema.svg). На ней сплошная рамка значит «проверено», пунктир — «на пробе».
 
 Слова со схемы:
 - **Владелец** — ставит задачу и принимает итог.
-- **Агент** — главная сессия Claude: планирует, раздаёт работу, отвечает владельцу.
-- **Субагенты** — помощники агента, которые выполняют задания: agy Flash, Claude Sonnet, Haiku.
-- **Jev** — проверяющий: сверяет результат с файлами на диске.
-- **Правила** — постоянные указания (`CLAUDE.md`, `rules/`): что можно, что нельзя, как отвечать.
-- **Скиллы** — инструкции под конкретное дело; агент берёт нужную по названию.
-- **Хуки** — автоматические сторожа: срабатывают на действия агента, напоминают или запрещают.
-- **MCP** — подключаемые инструменты и сервисы. Сейчас это поиск по коду и документам, проверки, браузер, мост к OpenCode; список можно расширять.
+- **Агент** — оркестратор, главная сессия Claude: планирует, раздаёт и принимает работу.
+- **Субагенты** — исполнители-помощники, обычно более дешёвые модели: agy Flash, Claude Sonnet, Claude Haiku.
+- **Jev** — сверяет результат с файлами на диске.
+- **Правила** — `CLAUDE.md` и папка `rules/`: что можно, что нельзя, как отвечать.
+- **Скиллы** — инструкции под конкретное дело.
+- **Хуки** — автоматические сторожа на действия агента: напоминают или запрещают.
+- **MCP** — подключаемые инструменты и сервисы.
 
-Коротко:
-1. Владелец ставит задачу. По желанию сначала превращает её в чёткое задание навыком `/brief` (с вопросами) или `/short-brief` (без вопросов).
-2. Главная сессия Claude — руководитель: решает, пишет задания, раздаёт, принимает. Режимы `/orc` и `/super-orc` запрещают ей делать рутину самой.
-3. Исполнители: agy Flash (Gemini Flash через сторож `agy-run`) — чтение, правки по готовой спеке, прогоны; Claude-субагент `worker` (Sonnet) — новая логика и дизайн; `Explore` (Haiku) — разведка.
-4. Проверка: результат сверяется с файлами на диске (MCP `jev`, навык `self-check`), а не с отчётом исполнителя.
-5. Вокруг всего — правила (`CLAUDE.md`, `rules/`) и хуки, которые на каждом шаге напоминают или блокируют: чтение кода в обход индекса, лишние соло-вызовы, расход контекста и лимитов.
+Как идёт работа:
+1. Владелец ставит задачу. Если нужно, сначала превращает её в чёткое задание скиллом `/brief`, он задаёт вопросы, или `/short-brief`, он обходится без вопросов.
+2. Агент пишет задания и раздаёт их. Режимы `/orc` и `/super-orc` запрещают ему делать рутину самому.
+3. agy Flash через сторож `agy-run` читает, правит по готовой спецификации и гоняет проверки. Субагент `worker` на Sonnet пишет новую логику и дизайн. `Explore` на Haiku ищет по проекту.
+4. Результат сверяется с файлами на диске, отчёту исполнителя на слово не верят.
+5. Правила и хуки действуют на каждом шаге: останавливают чтение кода в обход индекса, лишнюю работу руками, перерасход контекста и лимитов.
 
 ## Что в репозитории
 
@@ -35,56 +35,56 @@
 | `system/CLAUDE.md` | Главные инструкции: навигация по коду, делегирование, проверка, стиль ответов |
 | `system/rules/` | Отдельные правила: понятный язык, команды PowerShell, пути в Git Bash, предупреждение о необратимом, ИИ-штампы |
 | `system/hooks/` | Хуки, подключённые в настройках, и их библиотеки |
-| `system/skills/` | Системные навыки: agy, brief, short-brief, orc, super-orc, handoff, readme, git-ship, self-check, no-regressions, model-advisor, grill-me, cache-warm, jcodemunch, jdocmunch |
-| `system/agents/` | Субагенты: worker (Sonnet), Explore (Haiku), помощник брифа, opencode |
-| `system/commands/` | Команды, в том числе `oc` (делегирование в OpenCode) |
-| `system/mcp-wrappers/` | Обёртки запуска MCP-серверов (jev, jdocmunch) и мост к OpenCode |
+| `system/skills/` | Системные скиллы: agy, brief, short-brief, orc, super-orc, handoff, readme, git-ship, self-check, no-regressions, model-advisor, grill-me, cache-warm, jcodemunch, jdocmunch |
+| `system/agents/` | Субагенты: worker на Sonnet, Explore на Haiku, помощник брифа, opencode |
+| `system/commands/` | Команды, среди них `oc` для передачи задач в OpenCode |
+| `system/mcp-wrappers/` | Обёртки запуска MCP-серверов jev и jdocmunch, мост к OpenCode |
 | `system/output-styles/`, `system/statusline.js` | Стиль вывода и строка состояния |
-| `system/design-library/ai-stamps.md` | Каталог ИИ-штампов, на который ссылаются правила |
+| `system/design-library/ai-stamps.md` | Каталог ИИ-штампов, на него ссылаются правила |
 | `system/settings.example.json` | Шаблон `settings.json`: пути заменены метками, секреты — `<REDACTED>` |
 | `manifest.txt` | Белый список: что выгружается |
-| `export.ps1`, `redact.txt` | Скрипт выгрузки и дополнительные замены личного (`redact.txt` локальный, в репозиторий не попадает) |
-| `docs/` | Схема и рабочие заметки |
+| `export.ps1` | Выгрузка по белому списку с заменой личного |
+| `publish.ps1` | Обновление репозитория одной командой |
+| `docs/` | Схемы, статусы, список непроверенного |
 
-Метки в файлах: `<HOME>` — домашняя папка пользователя, `<VIBECODING>` — рабочая папка проектов, `<EMAIL>`, `<TELEGRAM_ID>`, `<REDACTED>` — вычищенные значения.
+Метки в файлах: `<HOME>` — домашняя папка пользователя, `<VIBECODING>` — рабочая папка проектов, `<EMAIL>`, `<TELEGRAM_ID>`, `<REDACTED>` — вычищенные значения. Дополнительные замены лежат в локальном `redact.txt`, в репозиторий он не попадает.
 
-## Чего здесь нет (намеренно)
+## Чего здесь нет намеренно
 
 - Память, журналы сессий, доступы, ключи, расписания, `settings.local.json`, резервные копии.
-- Рабочие навыки (kosmoseo, landing-page-builder, carousel, brevo-email): они для конкретной работы, не часть системы. На схеме показаны группой «Рабочие».
-- AGY Switch и сторож `agy-run` — отдельный закрытый репозиторий `eivl10/agy-switch`.
+- Рабочие скиллы kosmoseo, landing-page-builder, carousel, brevo-email: они для конкретной работы, не часть системы. На подробной схеме они показаны отдельной группой.
+- AGY Switch и сторож `agy-run`: они в отдельном закрытом репозитории `eivl10/agy-switch`.
 
-## Что нужно, чтобы это работало
+## Что нужно для работы
 
-- Claude Code (десктоп или CLI), Windows, PowerShell 5.1, Git Bash, Node.js.
-- MCP-серверы: jcodemunch (навигация по коду), jdocmunch (навигация по документации), jev (дешёвые проверки; ключ читается из переменной окружения пользователя).
-- agy (Antigravity CLI, модель Gemini Flash) и сторож `agy-run` из `eivl10/agy-switch`.
-- По желанию: OpenCode для команды `oc`.
+- Claude Code, десктоп или CLI. Windows, PowerShell 5.1, Git Bash, Node.js.
+- MCP-серверы: jcodemunch для навигации по коду, jdocmunch для навигации по документации, jev для дешёвых проверок. Ключ jev читается из переменной окружения пользователя.
+- agy, это Antigravity CLI с моделью Gemini Flash, и сторож `agy-run` из `eivl10/agy-switch`.
+- OpenCode для команды `oc`, если она нужна.
 
 ## Как поставить
 
-1. Скопировать содержимое `system/` в `~/.claude/` (сначала сделать резервную копию своей папки).
-2. `settings.example.json` переименовать в `settings.json`, заменить метки `<HOME>`, `<VIBECODING>` своими путями, вернуть свои значения вместо `<REDACTED>`.
-3. Подключить MCP-серверы и agy (см. выше), перезапустить Claude Code.
+1. Сделать резервную копию своей папки `~/.claude/` и скопировать в неё содержимое `system/`.
+2. Переименовать `settings.example.json` в `settings.json`, заменить метки `<HOME>`, `<VIBECODING>` своими путями, вернуть свои значения вместо `<REDACTED>`.
+3. Подключить MCP-серверы и agy, перезапустить Claude Code.
 
 ## Как обновить репозиторий
 
 ```powershell
-& ".\export.ps1" -DryRun
-& ".\export.ps1"
+& ".\publish.ps1"
 ```
-Затем проверка утечек и коммит — навыком `git-ship` («выложи систему»).
+Скрипт выгружает файлы, ищет личные данные и отправляет коммит, только если что-то изменилось. В чате то же самое запускается фразой «выложи систему».
 
 ## Что проверено
 
-Пометка берётся из реестра решений владельца: «подтверждённое» = проверено, остальное = на пробе (работает, но эффект не доказан).
+Пометка берётся из реестра решений владельца: «подтверждённое» значит проверено, остальное — на пробе. «На пробе» значит: работает, но польза ещё не доказана.
 
 Проверено:
-- `/brief` и `/short-brief` — навыки брифа (подтвердил владелец 03.11.2026).
-- Хук `block-get-file-content.ps1` — блокирует чтение файлов целиком (114 блокировок за 30 дней по аудиту).
-- Сторож `agy-run` — останавливает зависшего исполнителя (живой прогон 3 из 3; лежит в `eivl10/agy-switch`).
+- `/brief` и `/short-brief` — скиллы брифа, подтвердил владелец 03.11.2026.
+- Хук `block-get-file-content.ps1` запрещает читать файлы целиком: по аудиту 114 блокировок за 30 дней.
+- Сторож `agy-run` останавливает зависшего исполнителя: живой прогон 3 из 3. Лежит в `eivl10/agy-switch`.
 
-Всё остальное — на пробе. Подробно по каждому элементу: [docs/statuses.md](docs/statuses.md).
+Всё остальное на пробе. Статус каждого элемента: [docs/statuses.md](docs/statuses.md). Что не проверено и как это проверить: [docs/не-проверено.md](docs/не-проверено.md).
 
 ---
 
@@ -92,19 +92,14 @@
 
 Personal Claude Code setup: rules, hooks, skills, sub-agents and MCP wrappers that are actually in use. These are copies of the live files from `~/.claude`, exported by a whitelist with personal data scrubbed.
 
-**How it works** (see the diagram above; solid frame = verified, dashed = on trial):
-1. The owner gives a task, optionally turned into a precise brief by `/brief` (asks questions) or `/short-brief` (no questions).
-2. The main Claude session is the lead: decides, writes briefs, delegates, accepts. Modes `/orc` and `/super-orc` forbid it from doing routine work itself.
-3. Executors: agy Flash (Gemini Flash behind the `agy-run` watchdog) for reading, spec-driven edits and runs; `worker` sub-agent (Sonnet) for new logic and design; `Explore` (Haiku) for scouting.
-4. Verification against files on disk (`jev` MCP, `self-check` skill), not against an executor's report.
-5. Rules (`CLAUDE.md`, `rules/`) and hooks wrap everything: they remind or block on each step.
+**Diagram terms:** owner sets the task and accepts the result; agent is the orchestrator, the main Claude session that plans, delegates and accepts work; sub-agents are executors, usually cheaper models: agy Flash, Claude Sonnet, Claude Haiku; Jev checks results against files on disk; rules are standing instructions; skills are task-specific instructions; hooks are automatic guards on the agent's actions; MCP are pluggable tools and services. On the detailed diagram a solid frame means verified, dashed means on trial.
 
-**Contents:** `system/` holds the exported files (see the table above), `manifest.txt` is the whitelist, `export.ps1` + `redact.txt` do the export and scrubbing. Placeholders: `<HOME>`, `<VIBECODING>`, `<EMAIL>`, `<TELEGRAM_ID>`, `<REDACTED>`.
+**Contents:** `system/` holds the exported files, `manifest.txt` is the whitelist, `export.ps1` exports and scrubs, `publish.ps1` updates the repo in one run. Placeholders: `<HOME>`, `<VIBECODING>`, `<EMAIL>`, `<TELEGRAM_ID>`, `<REDACTED>`.
 
-**Not included on purpose:** memory, session logs, credentials, schedules, `settings.local.json`, backups, work-specific skills; AGY Switch and `agy-run` live in a separate private repo `eivl10/agy-switch`.
+**Not included on purpose:** memory, session logs, credentials, schedules, `settings.local.json`, backups, work-specific skills. AGY Switch and `agy-run` live in a separate private repo `eivl10/agy-switch`.
 
-**Requirements:** Claude Code, Windows, PowerShell 5.1, Git Bash, Node.js; MCP servers jcodemunch, jdocmunch, jev; agy (Antigravity CLI) with `agy-run`; optionally OpenCode.
+**Requirements:** Claude Code, Windows, PowerShell 5.1, Git Bash, Node.js; MCP servers jcodemunch, jdocmunch, jev; agy with `agy-run`; OpenCode if you need `oc`.
 
 **Install:** back up your `~/.claude`, copy `system/` into it, rename `settings.example.json` to `settings.json`, replace placeholders, connect MCP servers and agy, restart Claude Code.
 
-**Verified:** `/brief`, `/short-brief`, hook `block-get-file-content.ps1`, the `agy-run` watchdog. Everything else is on trial; per-item list in [docs/statuses.md](docs/statuses.md).
+**Verified:** `/brief`, `/short-brief`, hook `block-get-file-content.ps1`, the `agy-run` watchdog. Everything else is on trial: see [docs/statuses.md](docs/statuses.md).
