@@ -124,9 +124,9 @@ How the work goes:
 | `system/rules/` | Separate rules: plain language, PowerShell commands, Git Bash paths, warning before irreversible actions, AI-stamp catalog |
 | `system/hooks/` | Hooks wired in the settings, and their libraries |
 | `system/skills/` | System skills: agy, brief, short-brief, orc, super-orc, handoff, idle-handoff, readme, git-ship, self-check, no-regressions, model-advisor, grill-me, cache-warm, jcodemunch, jdocmunch |
-| `system/agents/` | Sub-agents: worker on Sonnet, Explore on Haiku, the brief helper, opencode |
-| `system/commands/` | Commands, among them `oc` for passing tasks to OpenCode |
-| `system/mcp-wrappers/` | Launch wrappers for the jev and jdocmunch MCP servers, and the OpenCode bridge |
+| `system/agents/` | Sub-agents: worker on Sonnet, Explore on Haiku, the brief helper |
+| `system/commands/` | Slash commands |
+| `system/mcp-wrappers/` | Launch wrappers for the jev and jdocmunch MCP servers |
 | `system/output-styles/`, `system/statusline.js` | Output style and status line |
 | `system/design-library/ai-stamps.md` | Catalog of AI stamps, referenced by the rules |
 | `system/settings.example.json` | Template of `settings.json`: paths replaced by placeholders, secrets are `<REDACTED>` |
@@ -148,7 +148,6 @@ Placeholders in files: `<HOME>` is the user's home folder, `<VIBECODING>` is the
 - Claude Code, desktop or CLI. Windows, PowerShell 5.1, Git Bash, Node.js.
 - MCP servers: jcodemunch for code navigation, jdocmunch for documentation navigation, jev for cheap checks. The jev key is read from a user environment variable.
 - agy, the Antigravity CLI with the Gemini Flash model, and the `agy-run` watchdog from `eivl10/agy-switch`.
-- OpenCode for the `oc` command, if you need it.
 
 ### How to install
 
