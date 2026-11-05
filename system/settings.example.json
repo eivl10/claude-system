@@ -212,6 +212,10 @@
           {
             "type": "command",
             "command": "node <HOME>/.claude/hooks/browser-guard.js"
+          },
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/idle-handoff-arm.js"
           }
         ]
       },
