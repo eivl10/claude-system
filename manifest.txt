@@ -43,6 +43,7 @@ C:/Users/eivld/.claude/skills/handoff => skills/handoff
 C:/Users/eivld/.claude/skills/idle-handoff => skills/idle-handoff
 C:/Users/eivld/.claude/skills/jcodemunch => skills/jcodemunch
 C:/Users/eivld/.claude/skills/jdocmunch => skills/jdocmunch
+C:/Users/eivld/.claude/skills/logging => skills/logging
 C:/Users/eivld/.claude/skills/model-advisor => skills/model-advisor
 C:/Users/eivld/.claude/skills/no-regressions => skills/no-regressions
 C:/Users/eivld/.claude/skills/orc => skills/orc
