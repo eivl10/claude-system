@@ -10,9 +10,15 @@
 // Делегирование: тул Agent или Task, либо Bash или PowerShell с вызовом agy и ключом --print или -p, либо со сторожем agy-run.js (--name или --resume). Сбрасывает счётчик.
 // Вызовы субагентов (поле agent_id в событии) пропускаются. Журнал: <state>/deleg-log.jsonl.
 // Переменные для тестов: DELEG_STATE_DIR, DELEG_TMP_DIR. Режим по умолчанию nudge: работу не блокирует.
+// 15.11.2026 (экономия токенов): вызовы из NOCOUNT (запись .md/.txt, чтение .md/.txt/.json/.jsonl/.log или Read с limit до 60, служебные тулы,
+//   git status/diff/log/show, Test-Path/Get-Item/Get-ChildItem без -Recurse/Get-FileHash) не считаются и не сбрасывают счётчик; в журнал идёт {ev:'skip',counted:false,why}.
+//   Запуск исполнителя (сброс) расширен: любой agy-run.js или agy в команде, mcp__ccd_session__start_session, mcp__opencode__delegate.
+//   Служебное сообщение на UserPromptSubmit (isServiceMessage из ctx-lib: уведомление фоновой задачи, тик таймера): счётчик сбрасывается как раньше, но напоминание не выводится.
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+let isServiceMessage = () => false;
+try { ({ isServiceMessage } = require('./ctx-lib')); } catch {}
 
 const MODE = process.env.DELEG_MODE === 'deny' ? 'deny' : 'nudge';
 const BIGWRITE = process.env.DELEG_BIGWRITE === 'on';
@@ -68,13 +74,55 @@ const DENY_BIG = (n) =>
 
 function readJson(f) { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } }
 
+// Не считаются и не сбрасывают счётчик (см. шапку). Проверяются ПОСЛЕ isDelegation: запуск исполнителя всегда сбрасывает.
+const NOCOUNT_TOOLS = /^(ToolSearch|Skill|AskUserQuestion|SendUserFile|ScheduleWakeup|ReadNotifications)$/;
+const NOCOUNT_PREFIX = /^mcp__(jev__|ccd_|scheduled-tasks__|claude-artifacts__|visualize__|terminal__)/;
+const NOCOUNT_MCP = /^mcp__(jdocmunch__(doc_resolve_repo|index_local)|jcodemunch__(resolve_repo|index_folder))$/;
+const LAUNCH_TOOLS = /^(mcp__ccd_session__start_session|mcp__opencode__delegate)$/;
+const DOC_WRITE_EXT = /\.(md|txt)$/i;
+const DOC_READ_EXT = /\.(md|txt|json|jsonl|log)$/i;
+const READ_SMALL = 60;
+const GIT_RO = /^\s*git(\s+(status|diff|log|show)|\s+-C\s+("[^"]*"|'[^']*'|\S+)\s+(status|diff|log|show|fetch|rev-list))(?![\w-])/i;
+const PS_RO_CMDLET = /^(Test-Path|Get-Item|Get-ChildItem|Get-FileHash)(?![\w-])/i;
+// форматирующие стадии конвейера допускаются: они ничего не делают с файлами
+const PS_RO_STAGE = /^(Select-Object|Format-Table|Format-List|Out-String|Sort-Object|Measure-Object|Where-Object)(?![\w-])/i;
+const PS_RECURSE = /\s-r(e(c(u(r(s(e)?)?)?)?)?)?(?=[\s:]|$)/i;
+
+// Команда оболочки только читает: git status|diff|log|show... либо целиком Test-Path/Get-Item/Get-ChildItem (без -Recurse)/Get-FileHash.
+function isReadOnlyCmd(cmd) {
+  const c = String(cmd || '').trim();
+  if (!c) return false;
+  if (GIT_RO.test(c)) return true;
+  if (/>|`/.test(c) || PS_RECURSE.test(c)) return false;
+  const segs = c.split(/\|\||&&|[;|\r\n]+/).map((s) => s.trim()).filter(Boolean);
+  return segs.length > 0 && segs.every((s) => PS_RO_CMDLET.test(s) || PS_RO_STAGE.test(s)) && segs.some((s) => PS_RO_CMDLET.test(s));
+}
+
+// Причина, по которой вызов не считается, либо null.
+function skipReason(tool, ti) {
+  const fp = String((ti && ti.file_path) || '');
+  if (NOCOUNT_TOOLS.test(tool)) return 'service-tool';
+  if (NOCOUNT_PREFIX.test(tool) || NOCOUNT_MCP.test(tool)) return 'service-mcp';
+  if (/^(Write|Edit|MultiEdit)$/.test(tool) && DOC_WRITE_EXT.test(fp)) return 'doc-write';
+  if (tool === 'Read') {
+    if (DOC_READ_EXT.test(fp)) return 'doc-read';
+    if (ti && ti.limit != null && ti.limit !== '' && Number(ti.limit) <= READ_SMALL) return 'read-small';
+  }
+  if ((tool === 'Bash' || tool === 'PowerShell') && isReadOnlyCmd(ti && ti.command)) return 'readonly-cmd';
+  return null;
+}
+
 function isDelegation(tool, ti) {
   if (tool === 'Agent' || tool === 'Task') return true;
+  if (LAUNCH_TOOLS.test(tool)) return true;
   if (tool !== 'Bash' && tool !== 'PowerShell') return false;
   const cmd = String((ti && ti.command) || '');
   if (/agy-quota-gate|cred-switch/.test(cmd)) return false;
   if (/agy-run\.js["']?\s[\s\S]*--(name|resume)\b/.test(cmd)) return true;
-  return /(^|[\s;&|"'`(\\/])agy(\.exe)?\s/.test(cmd) && /(--print|(^|\s)-p[= ])/.test(cmd);
+  if (/(^|[\s;&|"'`(\\/])agy(\.exe)?\s/.test(cmd) && /(--print|(^|\s)-p[= ])/.test(cmd)) return true;
+  // 15.11.2026: любое упоминание agy-run.js или вызова agy считается запуском исполнителя, кроме чисто читающих команд (git diff ... agy-run.js)
+  if (isReadOnlyCmd(cmd)) return false;
+  return /agy-run\.js/.test(cmd) || /(^|[\s;&|"'`(\\/])agy(\.exe)?\s/.test(cmd);
 }
 
 function levelOf(calls, orc) {
@@ -113,14 +161,18 @@ function main(inp) {
 
   if (ev === 'UserPromptSubmit') {
     const p = String(inp.prompt || '');
-    const solo = /(^|\s)\/solo(\s|$)/.test(p);
+    // служебное событие: режимы /solo и /orc из его текста не читаем (в уведомлении они могут быть лишь цитатой)
+    const svc = isServiceMessage(p);
+    const solo = !svc && /(^|\s)\/solo(\s|$)/.test(p);
     let orc = !!st.orc;
-    if (/(^|\s)\/orc\s+off\b/i.test(p)) orc = false;
+    if (svc) { /* режим оркестратора не меняем */ }
+    else if (/(^|\s)\/orc\s+off\b/i.test(p)) orc = false;
     else if (/(^|[\s"'«(>])\/(super-)?orc(?![\w-])/i.test(p) || /(скилл|skill)\s+super-orc/i.test(p)) orc = true;
     if (orc !== !!st.orc) log({ ev: orc ? 'orc-on' : 'orc-off', via: 'prompt' });
     Object.assign(st, fresh(), { solo, delegations: st.delegations, orc, bigDenied: st.bigDenied });
     save();
-    log({ ev: 'reset', solo, orc });
+    log(svc ? { ev: 'reset', solo, orc, service: true } : { ev: 'reset', solo, orc });
+    if (svc) return;
     out(ev, { additionalContext: solo ? 'Режим /solo на этот ход: подсказки deleg-gate выключены.' : (orc ? REMINDER_ORC : REMINDER) });
     return;
   }
@@ -136,6 +188,8 @@ function main(inp) {
       log({ ev: 'delegation', tool });
       return;
     }
+    const why = skipReason(tool, ti);
+    if (why) { log({ ev: 'skip', counted: false, why, tool }); return; }
     if (!COUNTED.test(tool)) return;
     st.calls += 1;
     let msg = null;
@@ -162,7 +216,7 @@ function main(inp) {
       }
     }
     if (MODE === 'deny') {
-      if (isDelegation(tool, ti) || !COUNTED.test(tool)) return;
+      if (isDelegation(tool, ti) || !COUNTED.test(tool) || skipReason(tool, ti)) return;
       const need = st.calls >= LEVELS[2] - 1 ? 2 : st.calls >= LEVELS[1] - 1 ? 1 : 0;
       if (st.denied < need) {
         st.denied = need;

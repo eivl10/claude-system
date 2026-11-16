@@ -8,6 +8,8 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+let isServiceMessage = () => false;
+try { ({ isServiceMessage } = require('./ctx-lib')); } catch {}
 
 const STATE_DIR = path.join(__dirname, '..', 'state');
 const SNAP = path.join(STATE_DIR, 'rate-limits.json');
@@ -98,6 +100,9 @@ process.stdin.on('end', () => {
   try { inp = JSON.parse(raw); } catch { return; }
   const ev = inp.hook_event_name;
   const tool = inp.tool_name || '';
+
+  // 0. Служебное событие (уведомление фоновой задачи, тик таймера): напоминаний нет. Блок субагентов (PreToolUse) не затронут.
+  if (ev === 'UserPromptSubmit' && isServiceMessage(inp.prompt)) return;
 
   // 1. Свежие данные из get_usage
   if (ev === 'PostToolUse' && tool === USAGE_TOOL) {

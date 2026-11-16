@@ -2,10 +2,13 @@
 
 Владелец не программист и задаёт вопросы, чтобы понять. Вопрос («почему», «как», «можно ли», «а если», «что будет», «зачем», знак «?») — ответить словами и остановиться. Не править файлы, не запускать, не делегировать, не чинить «заодно». Читать и искать, чтобы ответить, можно. Если из ответа напрашивается действие — одна строка «Могу сделать X», ждать «да» или «делай». Не понятно, вопрос это или просьба — считать вопросом. Повелительное («сделай», «добавь», «исправь», «залей») — просьба, исполнять по правилам ниже.
 
-## Старт сессии (до любого Read/grep/find/cat)
+## Поиск по коду: грузить при первой надобности (до первого Read/grep/find/cat по коду)
 
-1. `ToolSearch select:mcp__jcodemunch__resolve_repo,mcp__jcodemunch__search_symbols,mcp__jcodemunch__search_text,mcp__jcodemunch__get_file_outline,mcp__jcodemunch__get_symbol_source,mcp__jdocmunch__search_sections,mcp__jdocmunch__get_section` — тулы отложены, без этого не вызвать.
+Не на старте сессии, а перед первым обращением к коду или документам проекта (владелец, 15.11.2026: схемы тулов стоят около шести тысяч токенов). Задача без кода (вопрос, правила, уборка, тексты, план) — не грузить вовсе. В /orc и /super-orc по коду ищут исполнители, основная сессия эти тулы не грузит.
+
+1. Код: `ToolSearch select:mcp__jcodemunch__resolve_repo,mcp__jcodemunch__search_symbols,mcp__jcodemunch__get_file_outline,mcp__jcodemunch__get_symbol_source` — тулы отложены, без этого не вызвать. `search_text` и остальные догружать, когда понадобятся.
 2. `resolve_repo { path: <cwd> }`; `indexed:false` → `index_folder`.
+3. Доки: `ToolSearch select:mcp__jdocmunch__doc_resolve_repo,mcp__jdocmunch__search_sections,mcp__jdocmunch__get_section` только когда нужен поиск по документам; один известный .md открывать через Read.
 
 Код → jcodemunch, доки → jdocmunch. Хук `nav-guard.js` блокирует Read, Grep и Bash-`grep/cat/find/head/tail` по коду в проиндексированных репо и подсказывает тул. Не блокирует: .md, конфиги, повторный Read перед Edit, Read с offset/limit. Bash-блок — не больше 5 отказов за сессию.
 

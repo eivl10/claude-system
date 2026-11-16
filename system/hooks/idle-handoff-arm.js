@@ -6,7 +6,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { lastMain } = require('./ctx-lib');
+const { lastMain, isServiceMessage } = require('./ctx-lib');
 
 const IDLE_SEC = Number(process.env.IDLE_HANDOFF_SEC) || 3000;
 const EDITS_MIN = Number(process.env.IDLE_HANDOFF_EDITS) || 5;
@@ -38,6 +38,9 @@ process.stdin.on('end', () => {
     }
     return;
   }
+
+  // служебное событие (уведомление фоновой задачи и т.п.): таймер не ставим и lastUserTs не трогаем, иначе все ждущие тики станут «устарел»
+  if (isServiceMessage(prompt)) return;
 
   // сообщение владельца
   st.lastUserTs = Math.floor(Date.now() / 1000);

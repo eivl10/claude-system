@@ -4,12 +4,17 @@ const os = require('os');
 const path = require('path');
 
 const THRESHOLD = 3;
+const SKIP_EXT = /\.(md|txt)$/i;
+const SKIP_DIR = /(^|\/)(docs\/tmp-agy|memory|_архив)\//i;
 
 let raw = '';
 process.stdin.on('data', (d) => (raw += d));
 process.stdin.on('end', () => {
   let inp = {};
   try { inp = JSON.parse(raw); } catch { return; }
+  // Правки текста и служебных папок в счёт не идут: no-regressions про регрессии в коде.
+  const fp = String((inp.tool_input && inp.tool_input.file_path) || '').replace(/\\/g, '/');
+  if (SKIP_EXT.test(fp) || SKIP_DIR.test(fp)) return;
   const sid = String(inp.session_id || 'nosession').replace(/[^\w-]/g, '');
   const stateFile = path.join(os.tmpdir(), `claude-edits-${sid}.json`);
   let st = { n: 0, notified: false };
