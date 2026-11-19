@@ -1,0 +1,39 @@
+{
+  "handoff-start": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "node hooks/handoff-start-agy.js",
+        "timeout": 10
+      }
+    ]
+  },
+  "agy-reminders": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "node hooks/agy-hooks.js pre-invocation",
+        "timeout": 5
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/agy-hooks.js post-tool",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node hooks/agy-hooks.js stop",
+        "timeout": 5
+      }
+    ]
+  }
+}

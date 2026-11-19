@@ -60,6 +60,28 @@ F:/Vibecoding/_Проекты/ui-rules/rules => skills/ui-rules/rules
 F:/Vibecoding/_Проекты/ui-rules/scanner => skills/ui-rules/scanner
 C:/Users/eivld/.claude/skills/landing-page-builder => skills/landing-page-builder
 
+# Antigravity: адаптированные правила, хуки и скиллы (19.11.2026). Живые файлы в ~/.gemini/config, mcp_config.json и config.json не выкладываются: в них ключи и настройки машины
+F:/Vibecoding/_Проекты/claude-system/docs/antigravity.md => antigravity/README.md
+C:/Users/eivld/.gemini/config/AGENTS.md => antigravity/AGENTS.md
+C:/Users/eivld/.gemini/config/hooks.json => antigravity/hooks.json
+C:/Users/eivld/.gemini/config/hooks => antigravity/hooks
+C:/Users/eivld/.gemini/config/skills/handoff => antigravity/skills/handoff
+C:/Users/eivld/.gemini/config/skills/readme => antigravity/skills/readme
+C:/Users/eivld/.gemini/config/skills/no-regressions => antigravity/skills/no-regressions
+C:/Users/eivld/.gemini/config/skills/self-check => antigravity/skills/self-check
+C:/Users/eivld/.gemini/config/skills/logging => antigravity/skills/logging
+C:/Users/eivld/.gemini/config/skills/brief => antigravity/skills/brief
+C:/Users/eivld/.gemini/config/skills/short-brief => antigravity/skills/short-brief
+C:/Users/eivld/.gemini/config/skills/ui-rules => antigravity/skills/ui-rules
+C:/Users/eivld/.gemini/config/skills/landing-page-builder => antigravity/skills/landing-page-builder
+C:/Users/eivld/.gemini/config/skills/orc => antigravity/skills/orc
+C:/Users/eivld/.gemini/config/skills/super-orc => antigravity/skills/super-orc
+C:/Users/eivld/.gemini/config/skills/model-advisor => antigravity/skills/model-advisor
+C:/Users/eivld/.gemini/config/skills/jev-judgment => antigravity/skills/jev-judgment
+C:/Users/eivld/.gemini/config/skills/grill-me => antigravity/skills/grill-me
+C:/Users/eivld/.gemini/config/skills/caveman-plus => antigravity/skills/caveman-plus
+C:/Users/eivld/.gemini/config/skills/gsd-workflow => antigravity/skills/gsd-workflow
+
 # Общие исключения
 !**/node_modules/**
 !**/*.log

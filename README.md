@@ -41,6 +41,7 @@
 | `system/mcp-wrappers/` | Обёртки запуска MCP-серверов jev и jdocmunch, мост к OpenCode |
 | `system/output-styles/`, `system/statusline.js` | Стиль вывода и строка состояния |
 | `system/design-library/ai-stamps.md` | Каталог ИИ-штампов, на него ссылаются правила |
+| `system/antigravity/` | Та же система для Antigravity: `AGENTS.md`, `hooks.json` с хуками, скиллы, включая `ui-rules` и `landing-page-builder`. Подробно в `system/antigravity/README.md` |
 | `system/settings.example.json` | Шаблон `settings.json`: пути заменены метками, секреты — `<REDACTED>` |
 | `manifest.txt` | Белый список: что выгружается |
 | `export.ps1` | Выгрузка по белому списку с заменой личного |
@@ -52,7 +53,7 @@
 ## Чего здесь нет намеренно
 
 - Память, журналы сессий, доступы, ключи, расписания, `settings.local.json`, резервные копии.
-- Рабочие скиллы kosmoseo, landing-page-builder, carousel, brevo-email: они для конкретной работы, не часть системы. На подробной схеме они показаны отдельной группой.
+- Рабочие скиллы kosmoseo, carousel, brevo-email: они для конкретной работы, не часть системы. Скиллы `ui-rules` и `landing-page-builder` в репозитории есть с 19.11.2026. На подробной схеме они показаны отдельной группой.
 - AGY Switch и сторож `agy-run`: они в отдельном закрытом репозитории `eivl10/agy-switch`.
 
 ## Что нужно для работы
