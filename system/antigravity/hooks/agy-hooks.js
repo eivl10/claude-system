@@ -34,10 +34,16 @@ const load = (inp) => ({ seq: 0, change: -1, evidence: -1, kind: '', blocked: fa
 const save = (inp, st) => { try { fs.writeFileSync(stateFile(inp), JSON.stringify(st)); } catch {} };
 const sys = (text) => ({ systemMessage: { systemMessage: text } });
 
+// Запуск из сторожа agy-run (Claude Code раздаёт работу Flash): сторож дописывает к брифу этот хвост. Таким запускам карточка проекта,
+// напоминание стиля и возврат на самопроверку не нужны: узкий бриф, отчёт в файл, вопросов задать некому. Запуск с --no-footer так не узнать.
+const AGY_RUN_MARK = 'ОБЯЗАТЕЛЬНЫЕ ПРАВИЛА ЭТОГО ЗАПУСКА';
+
 function preInvocation(inp) {
   const steps = [];
   const st = load(inp);
   const text = String(inp.lastUserInput || '').trim();
+  if (text.includes(AGY_RUN_MARK)) st.agyRun = true;
+  if (st.agyRun) { save(inp, st); return null; }
   if (text) {
     const h = crypto.createHash('sha1').update(text).digest('hex');
     if (h !== st.lastHash) {
@@ -90,7 +96,7 @@ function stop(inp) {
   if (inp.continuationActive) return null;
   if (inp.terminationReason && inp.terminationReason !== 'NO_TOOL_CALL') return null;
   const st = load(inp);
-  if (st.change < 0 || st.blocked || st.evidence >= st.change) return null;
+  if (st.agyRun || st.change < 0 || st.blocked || st.evidence >= st.change) return null;
   st.blocked = true; save(inp, st);
   return { decision: 'continue', reason: VERIFY(`После изменения (${st.kind === 'edit' ? 'правка файла' : 'команда записи'}) не было запуска проверки.`) };
 }

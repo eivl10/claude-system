@@ -39,7 +39,7 @@
 
 | Что | Причина |
 |---|---|
-| `ctx-signal`, `ctx-lib`, скилл `cache-warm`, `idle-handoff` | Решали остывание кэша и рост контекста Claude. В Antigravity этой задачи нет, решение владельца 19.11.2026 |
+| `ctx-signal`, `ctx-lib`, скилл `cache-warm`, `idle-handoff` | Решали остывание кэша и рост контекста Claude. У Antigravity есть тул `schedule`, аналог таймера, но самой задачи нет: окно больше миллиона токенов. Решение владельца 19.11.2026 |
 | `limit-guard`, `usage-lib`, `log-session-usage`, `statusline` | Считают лимит подписки Claude |
 | `deleg-gate`, `jev-gate`, `subagent-start` | Привязаны к тулу Agent и квоте Claude. Правила про jev и проверку перенесены в `AGENTS.md` |
 | `nav-guard` | Жёсткий запрет чтения кода требует PreToolUse. Там нужен ответ `decision`, а `allow` разрешает вообще любой вызов, обходя запросы разрешений. Вместо запрета: правило в `AGENTS.md` и напоминание на сообщение |
