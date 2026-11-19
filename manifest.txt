@@ -66,6 +66,8 @@ C:/Users/eivld/.claude/skills/landing-page-builder => skills/landing-page-builde
 !**/*.jsonl
 !**/backup*/**
 !**/*.bak
+!**/*.bak-*
+!**/*.old-*
 !**/__pycache__/**
 !**/.git/**
 # личный реестр проектов навыка git-ship — не выкладывать
