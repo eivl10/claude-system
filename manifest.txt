@@ -5,7 +5,7 @@ C:/Users/eivld/.claude/statusline.js => statusline.js
 
 # Правила и дизайн
 C:/Users/eivld/.claude/rules => rules
-C:/Users/eivld/.claude/design-library/ai-stamps.md => design-library/ai-stamps.md
+C:/Users/eivld/.claude/design-library => design-library
 
 # Агенты и команды
 C:/Users/eivld/.claude/agents => agents
@@ -31,6 +31,9 @@ C:/Users/eivld/.claude/hooks/log-session-usage.js => hooks/log-session-usage.js
 C:/Users/eivld/.claude/hooks/nav-guard.js => hooks/nav-guard.js
 C:/Users/eivld/.claude/hooks/subagent-start.js => hooks/subagent-start.js
 C:/Users/eivld/.claude/hooks/usage-lib.js => hooks/usage-lib.js
+C:/Users/eivld/.claude/hooks/handoff-start.js => hooks/handoff-start.js
+C:/Users/eivld/.claude/hooks/idle-handoff-stop.js => hooks/idle-handoff-stop.js
+C:/Users/eivld/.claude/hooks/jev-gate.js => hooks/jev-gate.js
 
 # Системные навыки
 C:/Users/eivld/.claude/skills/agy => skills/agy
@@ -50,6 +53,12 @@ C:/Users/eivld/.claude/skills/orc => skills/orc
 C:/Users/eivld/.claude/skills/readme => skills/readme
 C:/Users/eivld/.claude/skills/self-check => skills/self-check
 C:/Users/eivld/.claude/skills/super-orc => skills/super-orc
+
+# Навыки, переносимые в Antigravity (решение владельца 19.11.2026)
+C:/Users/eivld/.claude/skills/ui-rules => skills/ui-rules
+F:/Vibecoding/_Проекты/ui-rules/rules => skills/ui-rules/rules
+F:/Vibecoding/_Проекты/ui-rules/scanner => skills/ui-rules/scanner
+C:/Users/eivld/.claude/skills/landing-page-builder => skills/landing-page-builder
 
 # Общие исключения
 !**/node_modules/**

@@ -52,6 +52,9 @@ process.stdin.on('end', () => {
   const last = lastMain(inp.transcript_path);
   const tokens = last ? last.tokens : 0;
   const worthy = st.on || st.mode || edits >= EDITS_MIN || tokens > TOKENS_MIN;
+  // needArm: хук остановки (idle-handoff-stop.js) проверит, что таймер для этого сообщения поставлен
+  st.needArm = !(st.off || !worthy);
+  st.blocks = 0;
   save();
   if (st.off || !worthy) return;
   out(`idle-handoff включён для этой сессии. В КОНЦЕ этого хода (после всей работы, одним из последних вызовов) вызови ScheduleWakeup: delaySeconds=${IDLE_SEC}, prompt="/idle-handoff тик t=${st.lastUserTs}", reason="проверка handoff при простое", noop=true. Владельцу об этом не пиши.`);

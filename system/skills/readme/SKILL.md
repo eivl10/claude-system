@@ -23,7 +23,7 @@ The one exception: if README doesn't exist yet, `handoff` may inline a *minimal*
 
 - Project has no real shape yet (a few exploratory files, nothing decided) — writing a README now just means rewriting it in a week. Wait until there's an actual architecture to describe.
 - Don't use this for a status update or a "what changed this session" — that's `handoff`.
-- Don't draft the prose yourself line-by-line — per the Delegation Policy, documentation writing routes to Gemini via `agy`. Your job is gathering verified facts, the purpose statement, and the original brief; agy's job is turning them into readable prose. Don't let agy invent architecture or motivation it wasn't given — feed it facts, not a vague prompt.
+- README is core documentation, so per CLAUDE.md (section «Делегирование», 17.11.2026) the main session writes the prose itself: Flash does not write it. Flash may only gather verified facts (repo outline, file tree, commands) into a file; the purpose, the original brief and the final text are yours. Don't let anything invent architecture or motivation that wasn't given.
 
 ## Steps
 
@@ -31,8 +31,8 @@ The one exception: if README doesn't exist yet, `handoff` may inline a *minimal*
 2. **Capture the original ТЗ/brief — close to verbatim, not paraphrased into something vaguer.** If this README is being written from the conversation where the user first described the project, pull the actual brief: what they asked for, any explicit constraints or non-goals stated at the time. This is the single most perishable piece of context in the whole system — it typically exists only in a chat that's about to be cleared, and unlike architecture it can't be reconstructed later by reading the code, because the code shows what got built, not what was asked. If the project already exists and the original brief isn't in the current conversation, check project memory files or ask the user whether it's written down somewhere before reconstructing it from current scope (current scope may have drifted from the original ask — see step 1 of `no-regressions`-style thinking: don't assume the current state was always the goal).
 3. **Note scope drift, if any.** If what's built now differs from the original ТЗ, say so in one line ("изначально просили X, сейчас Y — почему, см. FIXES.md" if it was a real decision, otherwise just "разрослось из X"). Don't silently let the original brief and current reality contradict each other without a bridge.
 4. **Gather the facts** — stack, folder structure, entry points, roles/key entities, how to run locally, how it deploys. Pull this from the actual repo (jcodemunch `get_repo_outline` / `get_file_tree` / `get_project_intel`), not from memory or assumption. Check for an existing `HANDOFF.md`/`FIXES.md`/access doc to link rather than duplicate.
-5. **Draft** — hand agy a fully-specified prompt: the purpose (step 1), the original brief (step 2), scope drift (step 3), and the verified facts (step 4), plus the section list below. Don't ask it to figure out what the project does or why; tell it.
-6. **Verify** — read the draft against the actual repo and against what the user actually said. Kill anything agy inferred that isn't backed by steps 1-4. A confidently-written wrong sentence here is worse than no README, because the next agent trusts it.
+5. **Draft** — write it yourself from the purpose (step 1), the original brief (step 2), scope drift (step 3), and the verified facts (step 4), using the section list below. Flash is used only for gathering facts in step 4.
+6. **Verify** — read the draft against the actual repo and against what the user actually said. Kill anything that isn't backed by steps 1-4. A confidently-written wrong sentence here is worse than no README, because the next agent trusts it.
 7. **Write it** — `README.md` at the project root. If one exists, update in place; don't fork a second "real" README.
 
 ## Language

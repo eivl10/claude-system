@@ -122,6 +122,10 @@
           {
             "type": "command",
             "command": "node <HOME>/.claude/hooks/limit-guard.js"
+          },
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/jev-gate.js"
           }
         ]
       }
@@ -159,11 +163,20 @@
         ]
       },
       {
-        "matcher": "Bash|PowerShell|Read|Edit|Write|MultiEdit|NotebookEdit|WebFetch|WebSearch|Agent|Skill|mcp__jcodemunch__.*|mcp__jdocmunch__.*",
+        "matcher": "Bash|PowerShell|Read|Edit|Write|MultiEdit|NotebookEdit|WebFetch|WebSearch|Agent|Skill|mcp__ccd_session__start_session|mcp__opencode__delegate|mcp__jcodemunch__.*|mcp__jdocmunch__.*",
         "hooks": [
           {
             "type": "command",
             "command": "node <HOME>/.claude/hooks/deleg-gate.js"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__jev__jev_classify|Bash|PowerShell|WebFetch|WebSearch|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/jev-gate.js"
           }
         ]
       }
@@ -239,6 +252,22 @@
           {
             "type": "command",
             "command": "node <HOME>/.claude/hooks/deleg-gate.js"
+          },
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/jev-gate.js"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/idle-handoff-stop.js",
+            "timeout": 5
           }
         ]
       }
@@ -266,6 +295,11 @@
             "type": "command",
             "command": "node <HOME>/.claude/hooks/index-nudge.js",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/handoff-start.js",
+            "timeout": 8
           }
         ]
       }

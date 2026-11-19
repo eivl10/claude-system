@@ -52,13 +52,19 @@ const LEVELS = [
 // Служебное сообщение на входе UserPromptSubmit (не владелец): уведомление фоновой задачи, тик таймера, событие боковых сессий и т.п.
 // Хуки-напоминалки на нём молчат. Список признаков правится ТОЛЬКО здесь (js-хуки); caveman-reminder.ps1 держит копию списка у себя.
 // Форма входа сверена по журналу сессии 15.11.2026: в transcript такое сообщение идёт текстом, начинающимся с <task-notification>.
+// 16.11.2026: ответ субагента (peer) тоже служебный. Признак: ОБЕ метки сразу (одна метка в сообщении владельца, например в цитате, служебным не считается),
+//   запасной: текст начинается с «Another Claude session sent a message:». Тик /cache-warm: начало «/cache-warm тик» (форма из скилла cache-warm).
+//   ВАЖНО: в caveman-reminder.ps1 метки ответа субагента умышленно НЕ продублированы: на ходе после ответа субагента оркестратор пишет отчёт владельцу, стиль там нужен.
 const SERVICE_CONTAINS = ['<task-notification>', '[SYSTEM NOTIFICATION - NOT USER INPUT]'];
-const SERVICE_STARTS = ['/idle-handoff тик', '<side-sessions-event>', '<ci-monitor-event>', '<<autonomous-loop'];
+const SERVICE_ALL = [['<agent-message from=', '[Subagent hand-back]']];
+const SERVICE_STARTS = ['/idle-handoff тик', '/cache-warm тик', '<side-sessions-event>', '<ci-monitor-event>', '<<autonomous-loop', 'Another Claude session sent a message:'];
 
 function isServiceMessage(prompt) {
   const p = String(prompt == null ? '' : prompt).trim();
   if (!p) return false;
-  return SERVICE_CONTAINS.some((s) => p.includes(s)) || SERVICE_STARTS.some((s) => p.startsWith(s));
+  return SERVICE_CONTAINS.some((s) => p.includes(s))
+    || SERVICE_ALL.some((all) => all.every((s) => p.includes(s)))
+    || SERVICE_STARTS.some((s) => p.startsWith(s));
 }
 
 module.exports = { contextTokens, lastMain, isServiceMessage, COLD_MS: 60 * 60 * 1000, COLD_TOKENS: 100000, LEVELS };
