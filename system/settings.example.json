@@ -136,7 +136,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "<HOME>/.cargo/bin/uvx.exe jcodemunch-mcp hook-posttooluse"
+            "command": "node <HOME>/.claude/hooks/hook-timer.js jcodemunch-posttooluse -- <HOME>/.cargo/bin/uvx.exe jcodemunch-mcp hook-posttooluse"
           }
         ]
       },
@@ -145,11 +145,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node <HOME>/.claude/hooks/auto-bom-fix.js"
+            "command": "node <HOME>/.claude/hooks/hook-timer.js auto-bom-fix -- node <HOME>/.claude/hooks/auto-bom-fix.js"
           },
           {
             "type": "command",
-            "command": "node <HOME>/.claude/hooks/edit-counter.js"
+            "command": "node <HOME>/.claude/hooks/hook-timer.js edit-counter -- node <HOME>/.claude/hooks/edit-counter.js"
           }
         ]
       },
@@ -158,7 +158,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node <HOME>/.claude/hooks/limit-guard.js"
+            "command": "node <HOME>/.claude/hooks/hook-timer.js limit-guard -- node <HOME>/.claude/hooks/limit-guard.js"
           }
         ]
       },
@@ -167,7 +167,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node <HOME>/.claude/hooks/deleg-gate.js"
+            "command": "node <HOME>/.claude/hooks/hook-timer.js deleg-gate -- node <HOME>/.claude/hooks/deleg-gate.js"
           }
         ]
       },

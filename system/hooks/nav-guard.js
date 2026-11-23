@@ -18,9 +18,10 @@ const DOC_INDEX_DIR = path.join(os.homedir(), '.doc-index', 'local');
 const ROOTS_CACHE = path.join(os.tmpdir(), 'claude-nav-roots.json');
 const DOC_ROOTS_CACHE = path.join(os.tmpdir(), 'claude-nav-docroots.json');
 
-const EXTS = 'jsx?|tsx?|mjs|cjs|py|go|css|scss|html?|php|ps1|sh|cs|lua|rs|java|kt|rb|sql|vue|svelte';
+const EXTS = 'jsx?|tsx?|mjs|cjs|py|go|rs|java|kt|c|h|cpp|hpp|cs|php|rb|swift|sh|ps1|lua|sql|vue|svelte';
 const CODE_EXT = new RegExp('\\.(' + EXTS + ')$', 'i');
 const CODE_EXT_IN_CMD = new RegExp('\\.(' + EXTS + ')\\b', 'i');
+const NON_CODE_EXT = /\.(html?|css|scss|jsonl?|csv|tsv|txt|log|xml|ya?ml|toml|ini|env|svg)$/i;
 const EXEMPT_PATH = /\.claude|AppData|[\\/]Temp[\\/]|[\\/]tmp[\\/]|\.code-index|node_modules|\.gemini/i;
 const EXEMPT_SEG = /\.claude|AppData|[\\/]Temp[\\/]|\/tmp\/|\.code-index|\.doc-index|node_modules|sed\s+-i/i;
 const EXEMPT_HEAD = /^(git|gh|ssh|scp|agy|rsync|sftp)\b|agy-run|[\\/]agy(\.exe)?\b|(^|[\s"'])agy\s/i;
@@ -132,6 +133,25 @@ function cdTarget(seg) {
   return m ? (m[1] || m[2] || m[3]) : null;
 }
 
+// Проверяет наличие каталога среди аргументов команды
+function hasDirArg(seg, base, roots) {
+  const re = /"([^"]+)"|'([^']+)'|([^\s"'|;&<>]+)/g;
+  let m;
+  let first = true;
+  while ((m = re.exec(seg))) {
+    const t = m[1] || m[2] || m[3];
+    if (first) { first = false; continue; }
+    if (!t || t.startsWith('-')) continue;
+    const p = isAbs(t) ? toWin(t) : path.resolve(base, t);
+    try {
+      if (fs.existsSync(p) && fs.statSync(p).isDirectory()) {
+        if (under(p, roots)) return true;
+      }
+    } catch {}
+  }
+  return false;
+}
+
 function checkShell(cmd, cwd, roots) {
   let base = cwd || '';
   for (const seg of splitSegments(cmd)) {
@@ -140,7 +160,8 @@ function checkShell(cmd, cwd, roots) {
     if (EXEMPT_HEAD.test(seg) || EXEMPT_SEG.test(seg)) continue;
     if (!READER.test(seg)) continue;
     const hasCode = CODE_EXT_IN_CMD.test(seg);
-    if (!(hasCode || RECURSIVE.test(seg))) continue;
+    const hasDir = hasDirArg(seg, base, roots);
+    if (!(hasCode || hasDir || RECURSIVE.test(seg))) continue;
     const abs = absPaths(seg);
     if (abs.length ? abs.some((a) => under(a, roots)) : under(base, roots)) return true;
   }
@@ -162,7 +183,7 @@ process.stdin.on('end', () => {
 
   if (tool === 'Read') {
     const fp = String(ti.file_path || '');
-    if (EXEMPT_PATH.test(fp) || ti.offset != null || ti.limit != null) process.exit(0);
+    if (EXEMPT_PATH.test(fp) || ti.offset != null || ti.limit != null || NON_CODE_EXT.test(fp)) process.exit(0);
     if (/\.mdx?$/i.test(fp)) {
       if (st.docNudges >= MAX_DOC_NUDGE || !under(fp, loadDocRoots())) process.exit(0);
       const key = norm(fp);

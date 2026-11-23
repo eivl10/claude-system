@@ -34,6 +34,8 @@ C:/Users/eivld/.claude/hooks/usage-lib.js => hooks/usage-lib.js
 C:/Users/eivld/.claude/hooks/handoff-start.js => hooks/handoff-start.js
 C:/Users/eivld/.claude/hooks/idle-handoff-stop.js => hooks/idle-handoff-stop.js
 C:/Users/eivld/.claude/hooks/jev-gate.js => hooks/jev-gate.js
+C:/Users/eivld/.claude/hooks/hook-timer.js => hooks/hook-timer.js
+C:/Users/eivld/.claude/hooks/hook-timing-report.js => hooks/hook-timing-report.js
 
 # Системные навыки
 C:/Users/eivld/.claude/skills/agy => skills/agy

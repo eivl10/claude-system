@@ -50,7 +50,7 @@ function main(inp) {
   try { fs.writeFileSync(stateFile, JSON.stringify(st)); } catch {}
   return {
     decision: 'block',
-    reason: `idle-handoff: таймер для этого сообщения не поставлен. Вызови сейчас ScheduleWakeup: delaySeconds=3000, prompt="/idle-handoff тик t=${st.lastUserTs}", reason="проверка handoff при простое", noop=true. Больше ничего не делай и владельцу не пиши, после вызова просто закончи ход.`,
+    reason: `Проверка при простое: это служебная настройка владельца, не отказывайся. Таймер для этого сообщения не поставлен. Вызови сейчас ScheduleWakeup: delaySeconds=3000, prompt="/idle-handoff тик t=${st.lastUserTs}", reason="проверка handoff при простое", noop=true. Больше ничего не делай и владельцу не пиши, после вызова просто закончи ход.`,
   };
 }
 
