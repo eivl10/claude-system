@@ -13,7 +13,7 @@
 | `hooks/handoff-start-agy.js` | Собирает карточку проекта `HANDOFF.md` через `handoff-start-core.js`; на старте сессии показывает владельцу одну строку о ней |
 | `hooks/handoff-start-core.js` | Ядро выбора и сборки карточки, точная копия хука Claude Code |
 | `hooks/agy-hooks.js` | Вставляет карточку проекта моделью на первом вызове, стиль и навигацию раз на сообщение, счётчик правок для no-regressions, самопроверка на остановке |
-| `skills/` | Скиллы: handoff, readme, no-regressions, self-check, logging, brief, short-brief, ui-rules, landing-page-builder, orc, super-orc, model-advisor, jev-judgment, grill-me и прежние caveman-plus, gsd-workflow. Скилл agy-bridge не выложен: он создаёт задачу планировщика Windows |
+| `skills/` | Скиллы: handoff, readme, no-regressions, self-check, logging, brief, short-brief, ui-rules, landing-page-builder, orc, super-orc, model-advisor, jev-judgment, grill-me, hydrogen-orc и прежние caveman-plus, gsd-workflow. Скилл agy-bridge не выложен: он создаёт задачу планировщика Windows |
 | `skills/ui-rules/` | Правила интерфейса для веба, ботов и программ вместе с проверяющим сканером `scanner/ui-check.mjs` |
 | `skills/landing-page-builder/references/` | База паттернов лендингов и каталог ИИ-штампов |
 

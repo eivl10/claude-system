@@ -83,6 +83,7 @@ C:/Users/eivld/.gemini/config/skills/jev-judgment => antigravity/skills/jev-judg
 C:/Users/eivld/.gemini/config/skills/grill-me => antigravity/skills/grill-me
 C:/Users/eivld/.gemini/config/skills/caveman-plus => antigravity/skills/caveman-plus
 C:/Users/eivld/.gemini/config/skills/gsd-workflow => antigravity/skills/gsd-workflow
+C:/Users/eivld/.gemini/config/skills/hydrogen-orc => antigravity/skills/hydrogen-orc
 
 # Общие исключения
 !**/node_modules/**
